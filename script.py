@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 class Grafo:
     def __init__(self, arquivo):
-        self.grafo = {} 
+        self.grafo = {}
         self.load_data(arquivo)
 
     def load_data(self, arquivo):
@@ -13,7 +13,7 @@ class Grafo:
                 linha = linha.strip()
                 if linha:
                     a, b, peso = linha.split()
-                    peso = int(peso)  
+                    peso = int(peso)
                     self.add_edge(a, b, peso)
 
     def add_edge(self, a, b, peso):
@@ -24,52 +24,49 @@ class Grafo:
 
         self.grafo[a][b] = peso
 
-    def dijkstra(self, start):
-        # Inicializar distâncias e predecessores
-        D = {node: float('inf') for node in self.grafo}
-        D[start] = 0
-        predecessors = {node: None for node in self.grafo}
-        N = set()
+    def dijkstra(self, start_vertex):
+        distances = {vertex: float('inf') for vertex in self.grafo}
+        distances[start_vertex] = 0
+        visited = set()
+        predecessors = {vertex: None for vertex in self.grafo}
 
-        while len(N) < len(self.grafo):
-  
-            w = min((node for node in self.grafo if node not in N), key=lambda node: D[node])
+        while len(visited) < len(self.grafo):
+            min_distance_vertex = None
+            min_distance = float('inf')
+            for vertex in distances:
+                if vertex not in visited and distances[vertex] < min_distance:
+                    min_distance = distances[vertex]
+                    min_distance_vertex = vertex
 
-     
-            N.add(w)
+            if min_distance_vertex is None:
+                break
 
-            for neighbor, cost in self.grafo[w].items():
-                if neighbor not in N:
-                    new_distance = D[w] + cost
-                    if new_distance < D[neighbor]:
-                        D[neighbor] = new_distance
-                        predecessors[neighbor] = w  
+            visited.add(min_distance_vertex)
 
-        return D, predecessors
+            for neighbor, weight in self.grafo[min_distance_vertex].items():
+                if neighbor not in visited:
+                    new_distance = distances[min_distance_vertex] + weight
+                    if new_distance < distances[neighbor]:
+                        distances[neighbor] = new_distance
+                        predecessors[neighbor] = min_distance_vertex
 
-    def reconstruir_caminho(self, predecessors, start, end):
-        caminho = []
-        atual = end
-        while atual is not None:
-            caminho.append(atual)
-            atual = predecessors[atual]
-        caminho.reverse()
-        return caminho if caminho[0] == start else None  
+        return distances, predecessors
 
+    def print_paths(self, start_vertex):
+        distances, predecessors = self.dijkstra(start_vertex)
+
+        for vertex in self.grafo:
+            if distances[vertex] == float('inf') or distances[vertex] == 0:
+                continue
+            path = []
+            current = vertex
+            while current is not None:
+                path.insert(0, current)
+                current = predecessors[current]
+            print(f"Shortest path from {start_vertex} to {vertex} (distance {distances[vertex]}): {' -> '.join(path)}")
 
 caminho_arquivo = 'num2.txt'
 grafh = Grafo(caminho_arquivo)
 
-
-start_vertex = input("Digite o vértice de início: ")
-distances, predecessors = grafh.dijkstra(start_vertex)
-
-
-
-for node in grafh.grafo:
-    if node != start_vertex:
-        caminho = grafh.reconstruir_caminho(predecessors, start_vertex, node)
-        if caminho:
-            print(f"Caminho mais curto de {start_vertex} para {node}: {' -> '.join(caminho)} com distância {distances[node]}")
-        else:
-            print(f"Não há caminho de {start_vertex} para {node}")
+start_vertex = input("Enter the starting vertex: ")
+grafh.print_paths(start_vertex)
