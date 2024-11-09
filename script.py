@@ -65,7 +65,7 @@ class Grafo:
                 current = predecessors[current]
             print(f"Shortest path from {start_vertex} to {vertex} (distance {distances[vertex]}): {' -> '.join(path)}")
 
-caminho_arquivo = 'num2.txt'
+caminho_arquivo = 'num.txt'
 grafh = Grafo(caminho_arquivo)
 
 start_vertex = input("Enter the starting vertex: ")
