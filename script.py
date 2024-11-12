@@ -56,7 +56,7 @@ class Grafo:
         distances, predecessors = self.dijkstra(start_vertex)
 
         for vertex in self.grafo:
-            if distances[vertex] == float('inf') or distances[vertex] == 0:
+            if  distances[vertex] == 0:
                 continue
             path = []
             current = vertex
@@ -65,7 +65,7 @@ class Grafo:
                 current = predecessors[current]
             print(f"Shortest path from {start_vertex} to {vertex} (distance {distances[vertex]}): {' -> '.join(path)}")
 
-caminho_arquivo = 'num.txt'
+caminho_arquivo = 'num2.txt'
 grafh = Grafo(caminho_arquivo)
 
 start_vertex = input("Enter the starting vertex: ")
